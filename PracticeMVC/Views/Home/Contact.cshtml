@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Angular";
+}
+<script src="~/dist/Scripts/jquery-1.10.2.js"></script>
+<script src="~/dist/Scripts/angular.min.js"></script>
+<style>
+    .done{background-color:green;}
+    .pending{background-color:red;}
+</style>
+<script type="text/javascript">
+    angular.module('notesApp', [])
+      .controller('MainCtrl', [function () {
+          //this.helloMsg = 'Hello ';
+          var helloMsg = 'Goodbye ';
+
+          var self = this;
+          self.message = 'Hello ';
+          self.cnt = 3;
+          self.notes = [
+              { id: 1, label: "First" ,done:false},
+              { id: 2, label: "Senond", done: true },
+              { id: 3, label: "Third", done: false }
+          ];
+          self.name = "";
+          self.status = false;
+
+          self.changeMessage = function () {
+              //var note = { id: self.cnt, label: self.cnt };
+              //self.notes.push(note);
+              //self.cnt++;
+
+              console.log(self.message.indexOf("Goodbye"));
+              if (self.message.indexOf("Goodbye") >= 0) {
+                  self.message = "Hello "
+                  self.status = true;
+              } else {
+                  self.message = "Goodbye ";
+                  self.status = false;
+              }
+
+              //alert(self.name);
+          };
+
+          self.getNotesClass = function (status) {
+              console.log(status);
+              return {
+                  done: status,
+                  pending: !status
+              };
+          };
+      }])
+
+    function consolelog() {
+        var result = "";
+        result = hammingDistance(1, 4);
+        console.log(result);
+    }
+
+    var hammingDistance = function (x, y) {
+        //return (x ^ y).toString(2).replace('0', '').length;
+        //=== 全相等
+        var xor = (x ^ y).toString(2).split('');
+        console.log(xor.filter((c) => c === '1'));
+        return [...(x ^ y).toString(2)].filter((c) => c === '1').length;
+    };
+</script>
+<html>
+
+<body ng-app="notesApp" class="ng-cloak">
+    <div ng-controller="MainCtrl as ctrl" class="jumbotron">
+        <button class="btn btn-info"  onclick="consolelog()">Test</button><br />
+        <select class="form-control">
+            <option ng-repeat="note in ctrl.notes" value="{{$first}}">{{$first}}</option>
+        </select>
+        <br />
+        <input type="text" class="form-control"
+               ng-model="ctrl.name"
+               placeholder="Enter your name">
+        <h1>Hello <span ng-bind="ctrl.name"></span></h1>
+        <button type="button" class="btn btn-danger" ng-click="ctrl.changeMessage()">
+            Change Message
+        </button>
+        <br />
+        @*<div ng-repeat="note in ctrl.notes" ng-class="ctrl.getNotesClass(note.done)">
+            {{note.label}}
+        </div>*@
+
+        <div>
+            {{ctrl.message}} Angular
+            <br />
+            {{ctrl.helloMsg}} angular
+        </div>
+
+    </div>
+</body>
+</html>

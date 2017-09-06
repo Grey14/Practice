@@ -1,0 +1,225 @@
+﻿@{
+    ViewBag.Title = "Vue";
+}
+<h2>@ViewBag.Title.</h2>
+@*<h3>@ViewBag.Message</h3>*@
+
+<body>
+    <div class="row" id="tableBody">
+
+        <div class="col-md-12" style="margin: 10px">
+            <label>全域註冊(Global Registration)</label>
+            <description-section></description-section>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    範例 : Vue.js  資料表
+                </div>
+                <div class="panel-body">
+                    <button type="button" v-on:click="GetData" id="BtnGetData" class="btn btn-primary">Get Data</button>
+                    <button type="button" v-on:click="Clear" id="BtnClear" class="btn btn-primary">Clear</button>
+                    @*<button type="button" v-on:click="ShowFilter" class="btn btn-primary">Show</button>*@
+                </div>
+                <!-- 表格開始 -->
+                <div style="margin: 10px">
+                    <input type="text" class="form-control" v-model="filterKey"  v-on:keyup="ShowFilter" />
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th v-for="column in columns" style="min-width: 45px">{{column}}</th>
+                                @*<th style="min-width: 45px">姓名</th>
+                                    <th style="min-width: 45px">身高</th>
+                                    <th style="min-width: 45px">體重</th>
+                                    <th style="min-width: 45px">BMI</th>
+                                    <th style="min-width: 45px">備註</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="item in filteredData">
+                                <td v-for="(value, key) in item">
+                                    <span>{{value}}</span>
+                                </td>
+                                @*<td>
+                                        <span>{{item.Name}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{item.Height}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{item.Weight}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{item.BMI}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{item.Memo}}</span>
+                                    </td>*@
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app">
+        {{ message }}
+        <br />
+        <input type="text" class="form-control" v-model="message" />
+
+        {{ number + 1 }}<br />
+        {{ ok ? 'YES' : 'NO' }}<br />
+        {{ message.split(' ').reverse().join(' ') }}<br />
+        <span v-bind:title="message">
+            mouse-over
+        </span>
+        <br />
+        <button class="btn btn-default" v-on:click="reverseMsg">reverse Message</button>
+        @*<button :class="btnOptions">按我</button>*@
+        <br />
+        <select class="form-control">
+            <option v-for="todo in todos">
+                {{ todo.text }}
+            </option>
+        </select>
+
+        <label>局部註冊 (Local Registration)</label>
+        <menu-section></menu-section>
+
+        名字:<input type="text" class="form-control" v-model="firstName" />
+        姓氏:<input type="text" class="form-control" v-model="lastName"  />
+
+        <p>{{ fullName }}</p>
+        <p>{{ shortName }}</p>
+
+        @*<p>{{ getFullName() }}</p>*@
+        @*v-bind 做 單向綁定
+        v-model 做 雙向綁定*@
+    </div>
+</body>
+
+<script src="~/dist/Scripts/jquery-1.10.2.js"></script>
+<script src="~/dist/Scripts/vue.min.js"></script>
+<script src="~/dist/Scripts/axios.min.js"></script>
+<script>
+    const items =
+    [
+          { text: 'NA' },
+          { text: 'JavaScript' },
+          { text: 'Vue' }
+    ];
+
+    //Vue.extend
+    //全域註冊(Global Registration)
+    Vue.component('description-section', {
+        template: '<ul><li v-for="item in menuItems">{{ item.text }}</li></ul>',
+        data: function () {
+            return {
+                menuItems: items
+            }
+        }
+    });
+</script>
+<script>
+    var vmApp; //vue instance
+    //設定資料繫結
+    function SetBinding() {
+        //create vue instance
+        vmApp = new Vue({
+            el: '#tableBody',
+            data: {
+                columns: {},
+                students: undefined,
+                filteredData: {},
+                filterKey: ""
+            },
+            methods: { 
+                ShowFilter: function () {
+                    if (this.students == undefined) {
+                        this.students = this.filteredData;
+                    }
+                    var filterKey = this.filterKey && this.filterKey.toLowerCase()
+                    this.filteredData = this.students.filter(function (row) {
+                        return Object.keys(row).some(function (key) {
+                            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
+                        })
+                        //return Object.keys(row).some(key => String(row[key]).toLowerCase().indexOf(filterKey) > -1);
+                    })
+
+                    //this.filteredData = this.items.filter(row=> Object.keys(row).some(key=>String(row[key]).toLowerCase().indexOf(filterKey) > -1));
+
+                },
+                GetData: function () {//從伺服器端取得資料
+                    @*$.post('@Url.Action("GetStudentInfo", "Home")', function (data) {
+                               this.items = data;
+                           });*@
+
+                    axios.post('@Url.Action("GetStudents", "Home")')
+                        .then(res => this.filteredData = res.data).catch(err => console.log(err));
+                },
+                Clear: function () {//清空
+                    //vmAppo.items = undefined;
+                    this.students = undefined;
+                    this.filteredData = {};//使用null 或是 undefined 會出現 error
+                }
+            }
+        });
+
+        GetColumn();
+    }
+
+    function GetColumn() {
+        axios.post('@Url.Action("GetStudentPropertyName", "Home")')
+            .then(res => vmApp.columns = res.data).catch(err => console.log(err));
+    }
+
+    //ready
+    $(function () {
+        //設定DataBinding
+        SetBinding();
+    });
+</script>
+<script>
+    const app = new Vue({
+        el: '#app', /* 掛載點 */
+        data: {     /* 初始資料 */
+            message: 'Hello World!!',
+            number: 1,
+            ok: true,
+            todos: items,
+            btnType: 'default',
+            firstName: 'Ralph',
+            lastName: 'Hsu'
+        },
+        /* 局部註冊 (Local Registration) */
+        components: {
+            'menu-section': {
+                //template: '#menuTemplate', /* 樣板選取器 */
+                template: '<ul><li v-for="item in menuItems">{{ item.text }}</li></ul>',
+                data: function () {
+                    return {
+                        menuItems: items
+                    }
+                }
+            },
+        },
+        methods: { /* 方法 每次重新渲染都會重算一次*/
+            reverseMsg: function () {
+                this.message = this.message.split(' ').reverse().join(' ');
+            },
+            getFullName: function () {
+                return this.firstName + ' ' + this.lastName;
+            }
+        },
+        computed: { // 「其相依 data 一變，computed 也會隨之更新」
+            fullName: function () {
+                return this.firstName + ' ' + this.lastName;
+            },
+            shortName: function () {
+                return this.firstName.split('')[0] + '. ' + this.lastName;
+            }
+        }
+    })
+</script>
+
+
+

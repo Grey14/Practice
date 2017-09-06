@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<script src="~/dist/Scripts/jquery-1.10.2.js"></script>
+<script src="~/dist/Scripts/jquery-ui-1.12.1.js"></script>
+<script src="~/dist/Scripts/jquery-ui.multidatespicker.js"></script>
+
+<script src="~/dist/Scripts/bootstrap.js"></script>
+<script src="~/dist/Scripts/bootstrap-datepicker.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        try {
+            console.log("???");
+            $('#mdp-demo').multiDatesPicker();
+        }
+        catch (e) {
+            console.log(e);
+        }
+
+        $('#sandbox-container').datepicker({
+        });
+    });
+
+
+</script>
+<div class="jumbotron">
+    <input id="mdp-demo">
+    <br /><br />
+    <input id="sandbox-container" type="text" class="form-control">
+</div>
+
