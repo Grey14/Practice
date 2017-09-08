@@ -1,32 +1,22 @@
 ﻿@{
     ViewBag.Title = "Index";
 }
+<link href="~/dist/css/chosen.css" rel="stylesheet" />
+<link href="~/dist/css/jquery-ui.css" rel="stylesheet" />
 <script src="~/dist/Scripts/jquery-1.10.2.js"></script>
 <script src="~/dist/Scripts/jquery-ui-1.12.1.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react-dom.js"></script>
+<script src="~/dist/Scripts/chosen.jquery.js"></script>
+<script src="~/dist/Scripts/jquery-ui-1.12.1.js"></script>
 <script src="~/dist/Scripts/jquery-ui.multidatespicker.js"></script>
-
-<script src="~/dist/Scripts/bootstrap.js"></script>
-<script src="~/dist/Scripts/bootstrap-datepicker.js"></script>
-
 <script type="text/javascript">
-    $(function () {
-        try {
-            console.log("???");
-            $('#mdp-demo').multiDatesPicker();
-        }
-        catch (e) {
-            console.log(e);
-        }
-
-        $('#sandbox-container').datepicker({
-        });
-    });
-
 
 </script>
 <div class="jumbotron">
-    <input id="mdp-demo">
-    <br /><br />
-    <input id="sandbox-container" type="text" class="form-control">
+    <div id="app"></div>
+
+    <script src="@Url.Content("~/dist/js/react.jsx")"></script>
 </div>
 
